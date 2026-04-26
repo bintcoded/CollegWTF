@@ -1,4 +1,4 @@
-const API_BASE = "http://localhost:3001/api/stories";
+const API_BASE = "https://collegwtf.onrender.com/api/stories";
 
 let majors = [];
 let categories = [];
