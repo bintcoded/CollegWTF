@@ -2,7 +2,7 @@
   "name": "collegewtf-sprint4-fixed",
   "version": "1.0.0",
   "description": "",
-  "main": "routes_stories_v2.js",
+  "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js"
