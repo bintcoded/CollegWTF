@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>College WTF</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <span class="logo" onclick="showPage('feed')">College<span class="accent">WTF</span></span>
+    <div class="nav-links">
+      <button class="nav-btn active" id="nav-feed"  onclick="showPage('feed')">Feed</button>
+      <button class="nav-btn admin-nav" id="nav-admin" onclick="handleAdminNav()">Admin</button>
+    </div>
+  </nav>
+
+  <!-- PAGE: FEED -->
+  <div id="page-feed" class="page active">
+
+    <div class="hero">
+      <p class="hero-eyebrow">CSC 5750 — Group 8</p>
+      <h1>What Just <span class="accent">Happened?</span></h1>
+      <p class="hero-sub">Anonymous stories from students who've been there. Because college is absolutely, gloriously unhinged.</p>
+      <button class="btn-primary" onclick="openModal()">+ Share Your Story</button>
+    </div>
+
+    <!-- Story of the Day -->
+    <div id="sotd-section" style="display:none;max-width:680px;margin:20px auto 0;padding:0 16px"></div>
+
+    <div class="filters-bar" id="filters-bar">
+      <div class="filter-group">
+        <span class="filter-label">Major</span>
+        <div class="chips" id="major-chips"></div>
+      </div>
+      <div class="filter-sep"></div>
+      <div class="filter-group">
+        <span class="filter-label">Category</span>
+        <div class="chips" id="cat-chips"></div>
+      </div>
+      <select class="sort-select" id="sort-select" onchange="renderFeed()">
+        <option value="new">Newest first</option>
+        <option value="top">Most reacted</option>
+      </select>
+    </div>
+
+    <main class="feed-layout">
+      <p class="feed-count" id="feed-count"></p>
+      <div id="story-feed"></div>
+    </main>
+  </div>
+
+  <!-- PAGE: ADMIN LOGIN -->
+  <div id="page-login" class="page">
+    <div class="login-wrap">
+      <div class="login-card">
+        <div class="login-logo">College<span class="accent">WTF</span></div>
+        <p class="login-sub">Admin Moderation Dashboard</p>
+        <div class="login-hint">Demo credentials: <strong>admin</strong> / <strong>wtf2026</strong></div>
+        <div class="form-group">
+          <label class="form-label" for="login-user">Username</label>
+          <input class="form-input" type="text" id="login-user" placeholder="Enter username" />
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="login-pass">Password</label>
+          <input class="form-input" type="password" id="login-pass" placeholder="Enter password"
+                 onkeydown="if(event.key==='Enter') doLogin()" />
+        </div>
+        <button class="btn-dark" onclick="doLogin()">Log In to Dashboard</button>
+        <p class="login-error" id="login-error"></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE: ADMIN DASHBOARD -->
+  <div id="page-admin" class="page">
+    <div class="admin-layout">
+      <div class="admin-header">
+        <div>
+          <h2 class="admin-title">Moderation Dashboard</h2>
+          <p class="admin-subtitle">College WTF — Admin Panel</p>
+        </div>
+        <div class="admin-header-right">
+          <span class="pending-badge" id="pending-badge">● 0 pending</span>
+          <button class="btn-outline-sm" onclick="doLogout()">Log out</button>
+        </div>
+      </div>
+      <div class="stats-grid" id="stats-grid"></div>
+      <div class="tab-bar">
+        <button class="tab-btn active" id="tab-queue" onclick="switchTab('queue')">Pending Queue</button>
+        <button class="tab-btn"        id="tab-log"   onclick="switchTab('log')">Moderation Log</button>
+        <button class="tab-btn"        id="tab-stats" onclick="switchTab('stats')">Breakdown</button>
+      </div>
+      <div id="tab-content-queue"><div id="pending-queue"></div></div>
+      <div id="tab-content-log"   style="display:none"><div id="mod-log"></div></div>
+      <div id="tab-content-stats" style="display:none"><div class="breakdown-grid" id="breakdown-grid"></div></div>
+    </div>
+  </div>
+
+  <!-- SUBMISSION MODAL -->
+  <div class="modal-overlay" id="modal" onclick="if(event.target===this) closeModal()">
+    <div class="modal-box">
+      <div class="modal-header">
+        <div>
+          <h3 class="modal-title">Share Your Story</h3>
+          <p class="modal-sub">Anonymous · 500 chars max · Goes to moderation first</p>
+        </div>
+        <button class="modal-close" onclick="closeModal()">✕</button>
+      </div>
+      <div id="modal-body">
+        <div class="anon-note">🔒 No account needed. Completely anonymous — no name, no email, no trace.</div>
+        <div class="form-group">
+          <label class="form-label" for="story-text">Your Story</label>
+          <textarea class="form-textarea" id="story-text" maxlength="500"
+                    placeholder="What just happened? Tell us..."
+                    oninput="updateSubmitForm()"></textarea>
+          <p class="char-count" id="char-count">0 / 500</p>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="submit-major">Academic Major</label>
+            <select class="form-select" id="submit-major" onchange="updateSubmitForm()">
+              <option value="">Select major...</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="submit-cat">Story Category</label>
+            <select class="form-select" id="submit-cat" onchange="updateSubmitForm()">
+              <option value="">Select category...</option>
+            </select>
+          </div>
+        </div>
+        <button class="btn-primary full-width" id="submit-btn" onclick="submitStory()" disabled>Submit Story</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+  <script src="script.js"></script>
+</body>
+</html>
